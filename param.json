@@ -1,8 +1,10 @@
 {
 	"items" :
 	[
-		"source" : "relay",
-		"processName" : "node",
-		"processCwd" : "/home/ubuntu/projects/graphdat.relay$"
+		{
+			"source" : "relay",
+			"processName" : "node",
+			"processCwd" : "/home/ubuntu/projects/graphdat.relay$"
+		}
 	]
 }

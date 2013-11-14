@@ -82,8 +82,7 @@ function findProcId(cfg)
 
 
 var _pollInterval = _param.pollInterval || 1000;
-var _pagesize = _sysconf.get(_sysconf._SC_PAGESIZE);
-
+var _hz = _sysconf.get(_sysconf._SC_CLK_TCK);
 
 function pollProcess(prc)
 {
@@ -107,10 +106,23 @@ function pollProcess(prc)
 		try
 		{
 			var stat = _fs.readFileSync('/proc/' + prc.pid + '/stat', 'utf8').split(' ');
-			var utime = parseInt(stat[13]);
-			var stime = parseInt(stat[14]);
+			var uptime = parseInt(_fs.readFileSync('/proc/uptime', 'utf8').split(' ')[0]);
 
-			console.log(utime + ', ' + stime);
+			var time = (parseInt(stat[13]) + parseInt(stat[14])) / _hz;
+
+			if (prc.lastUp)
+			{
+				var dtotal = uptime - prc.lastUp;
+				var dtime = time - prc.lastTime;
+
+				var p = dtime / dtotal;
+
+				console.log('%s = %d', prc.srouce, p);
+			}
+
+			prc.lastUp = uptime;
+			prc.lastTime = time;
+
 			//console.log('CPU_PROCESS %d %s', memuse, prc.source);
 
 		}
