@@ -1,0 +1,35 @@
+{
+	"description" : "Displays CPU use for a single process",
+	"command" : "node index.js",
+	"postExtract" : "npm install",
+	"ignore" : "node_modules",
+	"metrics" : ["CPU_PROCESS"],
+	"paramArray" : { "itemTitle" : ["source"], "schemaTitle" : "Process"},
+	"paramSchema" : [
+		{
+			"title" : "Source",
+			"name" : "source",
+			"description" : "The source to display in the legend for the CPU data.",
+			"type" : "string",
+			"required" : true
+		},
+		{
+			"title" : "Process Name Regex",
+			"name" : "processName",
+			"description" : "A regular expression to match the name of the process.",
+			"type" : "string"
+		},
+		{
+			"title" : "Process Path Regex",
+			"name" : "processPath",
+			"description" : "A regular expression to match the full path of the process.",
+			"type" : "string"
+		},
+		{
+			"title" : "Process CWD Regex",
+			"name" : "processCwd",
+			"description" : "A regular expression to match the current working directory of the process.",
+			"type" : "string"
+		}
+	]
+}

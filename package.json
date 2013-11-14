@@ -1,0 +1,12 @@
+{
+	"name": "process_cpu.graphdat.plugin",
+	"version": "0.0.1",
+	"title": "Watch individual process CPU",
+	"main": "index.js",
+	"private": true,
+	"dependencies": {
+		"graphdat-plugin-tools" : "0.0.1",
+		"sysconf" : "0.1.0"
+	},
+	"engine": "node >= 0.8.1"
+}
