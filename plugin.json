@@ -30,6 +30,12 @@
 			"name" : "processCwd",
 			"description" : "A regular expression to match the current working directory of the process.",
 			"type" : "string"
+		},
+		{
+			"title" : "Reconcile option",
+			"name" : "reconcile",
+			"description" : "How to reconcile in the case that multiple processes match.  Set to First Match to use the first matching process, Parent to choose the parent process (useful in process is forked), or Longest Running to pick the process that has been running the longest.",
+			"type" : { "enum" : [["None", "none"], ["First Match", "first"], ["Parent", "parent"], ["Longest Running", "uptime"]]}
 		}
 	]
 }
