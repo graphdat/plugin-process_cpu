@@ -6,6 +6,10 @@ Displays CPU usage (%) for specific processes. Uses regular expressions to speci
 ### Platforms
 - Linux
 
+#### Prerequisites
+- node version 0.8.0 or later
+- npm version 1.4.21 or later
+
 ### Plugin Setup
 None
 
