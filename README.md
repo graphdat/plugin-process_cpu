@@ -3,17 +3,23 @@ Boundary Process CPU Plugin
 
 Displays CPU usage (%) for specific processes. Uses regular expressions to specify a process name, process full path, and/or the process current working directory. As above, currently only works for Linux based systems that support procfs (i.e. have a /proc directory). **Note**: to monitor processes with elevated priviledges requires running the meter as root, which is not recommended.
 
-### Platforms
-- Linux
+### Prerequisites
 
-#### Prerequisites
-- node version 0.8.0 or later
-- npm version 1.4.21 or later
+|     OS    | Linux | Windows | SmartOS | OS X |
+|:----------|:-----:|:-------:|:-------:|:----:|
+| Supported |   v   |    -    |    -    |  -   |
+
+
+|  Runtime | node.js | Python | Java |
+|:---------|:-------:|:------:|:----:|
+| Required |    +    |        |      |
+
+- [How to install node.js?](https://help.boundary.com/hc/articles/202360701)
 
 ### Plugin Setup
 None
 
-### Plugin Configuration Fields
+#### Plugin Configuration Fields
 
 |Field Name        |Description                                                                                                                                                                                                                                                    |
 |:-----------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
