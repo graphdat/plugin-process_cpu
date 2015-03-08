@@ -70,6 +70,9 @@ function poll(cfg)
   tools.findProcStat(cfg,
     function (err,proc)
       if (err) then
+        --reset previous metrics
+        currentValues[cfg.processName]={};
+        previousValues[cfg.processName]={};
         utils.debug(err)
         return
       end

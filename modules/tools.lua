@@ -63,7 +63,7 @@ end
 
 --
 -- Cross platform process stats by name pattern
--- it uses `ps` on *nix and powershell 
+-- it uses `ps` on *nix and `tasklist` on Windows 
 -- Configuration parameters:
 --   processName: process name pattern (as per `ps -o comm,args` on Unix )
 --   reconcile: reconcile technique if multiple found, can be:
