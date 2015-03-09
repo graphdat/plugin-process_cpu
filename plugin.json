@@ -1,7 +1,9 @@
 {
-	"description" : "Displays CPU use for a single process",
+	"description" : "Displays CPU use for processes",
 	"command" : "node index.js",
 	"postExtract" : "npm install",
+	"command_lua" : "boundary-meter index.lua",
+	"postExtract_lua" : "",
 	"ignore" : "node_modules",
 	"metrics" : ["CPU_PROCESS"],
 	"paramArray" : { "itemTitle" : ["source"], "schemaTitle" : "Process"},
