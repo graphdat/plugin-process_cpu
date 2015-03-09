@@ -65,7 +65,7 @@ end
 -- Cross platform process stats by name pattern
 -- it uses `ps` on *nix and `tasklist` on Windows 
 -- Configuration parameters:
---   processName: process name pattern (as per `ps -o comm,args` on Unix )
+--   processName: process name pattern ( matching values from `ps -o comm,args` on *nix or command name on Windows)
 --   reconcile: reconcile technique if multiple found, can be:
 --            "first" : use the first one found, default
 --            "parent" : use the one that is parent of others
@@ -83,15 +83,27 @@ tools.findProcStat = function (cfg, cb)
   cfg = cfg or {}
   cfg.reconcile = cfg.reconcile or "first"
 
+  local cmd     --ps on *nix, tasklist on Windows
+  local opts    --command options
+  local env     --environment variables
+  local sep     --field separator
+
   if (isWindows) then
-    cb ("OS not supported yet")
-    return
-  end
+    cmd = "tasklist"
+    opts = {"/v", "/fo","csv" }
+    env = {}
+    sep = ","
 
-  local opts = {"-e", "-o","pid,ppid,time,rss,comm,args" }
+  else --*nix
 
-  if (isLinux and cfg.reconcile == "uptime") then
-    opts[#opts+1] = "--sort=lstart"
+    cmd = "ps"
+    opts = {"-e", "-o","pid,ppid,time,rss,comm,args" }
+    if (isLinux and cfg.reconcile == "uptime") then
+      opts[#opts+1] = "--sort=lstart"
+    end
+    env = { ["COLUMNS"] = 4096 }
+    sep = " "
+
   end
 
   local psHandler = function ( err, stdout, stderr )
@@ -107,15 +119,29 @@ tools.findProcStat = function (cfg, cb)
     stdout:gsub("[^\r\n]+", function(line)
       if (found) then return end
 
-      local _proc = tools.split(line,' ')
-      local proc = {
-        ["pid"] = table.remove(_proc,1),
-        ["ppid"] = table.remove(_proc,1),
-        ["time"] = table.remove(_proc,1),
-        ["rss"] = table.remove(_proc,1),
-        ["comm"] = table.remove(_proc,1),
-        ["args"] = table.concat(_proc," "),
-      }
+      local _proc = tools.split(line,sep)
+      local proc
+
+      if (isWindows) then
+        --csv format
+        proc = {}
+        proc.comm = _proc[1]:gsub("^\"*(.-)\"*$", "%1") --trim enclosing "
+        proc.pid  = _proc[2]:gsub("^\"*(.-)\"*$", "%1")
+        proc.rss  = _proc[5]:gsub("^\"*(.-)\"*$", "%1")
+        proc.time = _proc[8]:gsub("^\"*(.-)\"*$", "%1")
+        proc.ppid = -1 -- tasklist doesn't support parent pid
+        proc.args = ""  --tasklist doesn't show arguments
+      else
+        proc = {
+          ["pid"]  = table.remove(_proc,1),
+          ["ppid"] = table.remove(_proc,1),
+          ["time"] = table.remove(_proc,1),
+          ["rss"]  = table.remove(_proc,1),
+          ["comm"] = table.remove(_proc,1),
+          ["args"] = table.concat(_proc," "),
+        }
+      end
+
       if (string.match(proc.comm, cfg.processName) ~= nil or string.match(proc.args, cfg.processName) ~= nil) then
         if (cfg.reconcile == "first" or cfg.reconcile == "uptime") then
           found=true
@@ -141,7 +167,7 @@ tools.findProcStat = function (cfg, cb)
     cb("Process "..cfg.processName.." not found")
   end
 
-  childProcess.execFile("ps" , opts , { ["COLUMNS"] = 4096 }, psHandler ) 
+  childProcess.execFile(cmd , opts , env , psHandler ) 
 
 end
 

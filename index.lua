@@ -48,7 +48,7 @@ function diffTimeValues(source,name)
   --convert cur value into timestamp
   local t = tools.split(_cur,"-") --days
   local days = (#t>1) and table.remove(t,1) or 0 
-  local time = tools.split(t[1],":") -- hours, minutes , seconds
+  local time = isWindows and tools.split(t[1],".") or tools.split(t[1],":") -- hours, minutes , seconds
   local cur = (days*24*60*60) + (time[1]*60*60) + (time[2]*60) + time[3]
 
   local last = previousValues[source][name] or cur or 0
@@ -93,9 +93,6 @@ if (#_parameters.items >0 ) then
     timer.setInterval(_parameters.pollInterval,poll,item)
   end
 else
-  local source = _parameters.source --default hostname
-  currentValues[source]={};
-  previousValues[source]={};
-  timer.setInterval(_parameters.pollInterval,poll,source)
+  utils.debug("No configuration found")
 end
 
