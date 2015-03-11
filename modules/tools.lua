@@ -108,7 +108,6 @@ tools.findProcStat = function (cfg, cb)
 
   local psHandler = function ( err, stdout, stderr )
     if (err or #stderr>0) then 
-      --print errors to stderr
       cb(err or stderr)
       return
     end 
@@ -127,7 +126,7 @@ tools.findProcStat = function (cfg, cb)
         proc = {}
         proc.comm = _proc[1]:gsub("^\"*(.-)\"*$", "%1") --trim enclosing "
         proc.pid  = _proc[2]:gsub("^\"*(.-)\"*$", "%1")
-        proc.rss  = _proc[5]:gsub("^\"*(.-)\"*$", "%1")
+        proc.rss  = _proc[5]:gsub("^\"*(%d-)[^%d]?(%d-)[^%d]?(%d-)[^%d]?(%d-) K\"*$", "%1%2%3%4") --remove trailing ' K' and thousands separator
         proc.time = _proc[8]:gsub("^\"*(.-)\"*$", "%1")
         proc.ppid = -1 -- tasklist doesn't support parent pid
         proc.args = ""  --tasklist doesn't show arguments
@@ -141,6 +140,8 @@ tools.findProcStat = function (cfg, cb)
           ["args"] = table.concat(_proc," "),
         }
       end
+
+      proc.rss=(tonumber(proc.rss) or 0 ) --convert to number
 
       if (string.match(proc.comm, cfg.processName) ~= nil or string.match(proc.args, cfg.processName) ~= nil) then
         if (cfg.reconcile == "first" or cfg.reconcile == "uptime") then
